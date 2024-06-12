@@ -9,6 +9,7 @@ from pathlib import Path
 
 import openai
 import psutil
+from openai import OpenAI
 
 from commands import get_command_result
 from prompt_file import PromptFile
@@ -16,6 +17,7 @@ from prompt_file import PromptFile
 MULTI_TURN = "off"
 SHELL = ""
 
+CLIENT_DATA = {}
 MODEL = ''
 TEMPERATURE = 0
 MAX_TOKENS = 300
@@ -53,14 +55,20 @@ def initialize():
     Initialize openAI and shell mode
     """
     global MODEL
+    global CLIENT_DATA
 
     # Check if the file at API_KEYS_LOCATION exists
     create_template_ini_file()
     config = configparser.ConfigParser()
     config.read(API_KEYS_LOCATION)
 
-    openai.api_key = config['openai']['secret_key'].strip('"').strip("'")
-    openai.organization = config['openai']['organization_id'].strip('"').strip("'")
+    api_key = config['openai']['secret_key'].strip('"').strip("'")
+    organization = config['openai']['organization_id'].strip('"').strip("'")
+
+    CLIENT_DATA = {
+        'api_key': api_key,
+        'organization': organization
+    }
     MODEL = config['openai']['model'].strip('"').strip("'")
 
     prompt_config = {
@@ -118,6 +126,10 @@ def detect_shell():
 if __name__ == '__main__':
     detect_shell()
     prompt_file = initialize()
+    client = OpenAI(
+        api_key=CLIENT_DATA['api_key'],
+        organization=CLIENT_DATA['organization']
+    )
 
     try:
         user_query, prompt_file = get_query(prompt_file)
@@ -134,25 +146,28 @@ if __name__ == '__main__':
         codex_query = prompt_file.read_prompt_file(user_query) + user_query
 
         # get the response from openAI
-        response = openai.ChatCompletion.create(model=config['model'],
-                                                messages=[
-                                                    {'role': 'system', 'content': 'You are a shell code assistant, '
-                                                                                  'complete the textual query of the '
-                                                                                  'user with a valid shell command. '
-                                                                                  'The specific shell type is ' +
-                                                                                  config['shell'] + '. If the user '
-                                                                                                    'wants a textual '
-                                                                                                    'reply, your reply'
-                                                                                                    'should be '
-                                                                                                    'prefixed with a '
-                                                                                                    'comment'
-                                                                                                    'symbol based on '
-                                                                                                    'the shell type.'},
-                                                    {'role': 'user', 'content': codex_query}],
-                                                temperature=config['temperature'], max_tokens=config['max_tokens'],
-                                                stop="#")
 
-        completion_all = response['choices'][0]['message']['content']
+        response = client.chat.completions.create(model=config['model'],
+                                                  messages=[
+                                                      {'role': 'system', 'content': 'You are a shell code assistant, '
+                                                                                    'complete the textual query of the '
+                                                                                    'user with a valid shell command. '
+                                                                                    'The specific shell type is ' +
+                                                                                    config['shell'] + '. If the user '
+                                                                                                      'wants a textual '
+                                                                                                      'reply, your '
+                                                                                                      'reply'
+                                                                                                      'should be '
+                                                                                                      'prefixed with a '
+                                                                                                      'comment'
+                                                                                                      'symbol based on '
+                                                                                                      'the shell '
+                                                                                                      'type.'},
+                                                      {'role': 'user', 'content': codex_query}],
+                                                  temperature=config['temperature'], max_tokens=config['max_tokens'],
+                                                  stop="#")
+
+        completion_all = response.choices[0].message.content
 
         print(completion_all)
 
@@ -163,11 +178,11 @@ if __name__ == '__main__':
 
     except FileNotFoundError:
         print('\n\n# Codex CLI error: Prompt file not found, try again')
-    except openai.error.RateLimitError:
+    except openai.RateLimitError:
         print('\n\n# Codex CLI error: Rate limit exceeded, try later')
-    except openai.error.APIConnectionError:
+    except openai.APIConnectionError:
         print('\n\n# Codex CLI error: API connection error, are you connected to the internet?')
-    except openai.error.InvalidRequestError as e:
+    except openai.BadRequestError as e:
         print('\n\n# Codex CLI error: Invalid request - ' + str(e))
     except Exception as e:
         print('\n\n# Codex CLI error: Unexpected exception - ' + str(e))
