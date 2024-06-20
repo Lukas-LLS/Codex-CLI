@@ -19,7 +19,7 @@ create_completion()
     fi
     # Get the text typed until now
     text=${READLINE_LINE}
-    completion=$(echo -n "$text" | $CODEX_CLI_PATH/src/codex_query.py)
+    completion=$(echo -n "$text" | python $CODEX_CLI_PATH/src/codex_query.py)
     # Add completion to the current buffer
     READLINE_LINE="${text}"$'\n'"${completion}"
     # Put the cursor at the end of the line
