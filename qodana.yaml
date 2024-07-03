@@ -1,5 +1,5 @@
 version: 1.0
-linter: jetbrains/qodana-python-community:2024.1
+linter: jetbrains/qodana-python-community:latest
 profile:
   name: qodana.recommended
 bootstrap:
