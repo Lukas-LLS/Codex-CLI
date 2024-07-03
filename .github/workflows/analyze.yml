@@ -17,7 +17,7 @@ jobs:
         with:
           auto-activate-base: true
           auto-update-conda: true
-          python-version: '3.11'
+          python-version: '3.12'
       - name: Run Qodana
         uses: JetBrains/qodana-action@latest
         env:
