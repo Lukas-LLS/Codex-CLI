@@ -18,6 +18,7 @@ class PromptFile:
 
         self.file_path = self.default_file_path
         self.config_path = self.default_config_path
+        self.config = {}
 
         # loading in one of the saved contexts
         if file_name != self.default_context_filename:
@@ -88,7 +89,7 @@ class PromptFile:
             self.config['token_count'] += len(user_query.split()) + len(prompt_response.split())
             self.set_config(self.config)
 
-    def read_prompt_file(self, input):
+    def read_prompt_file(self, input_str):
         """
         Get the updated prompt file
         Checks for token overflow and appends the current input
@@ -96,7 +97,7 @@ class PromptFile:
         Returns: the prompt file after appending the input
         """
 
-        input_tokens_count = len(input.split())
+        input_tokens_count = len(input_str.split())
         need_to_refresh = (self.config['token_count'] + input_tokens_count > 2048)
 
         if need_to_refresh:
@@ -143,15 +144,15 @@ class PromptFile:
         """
         config = self.read_config()
         filename = time.strftime("%Y-%m-%d_%H-%M-%S") + ".txt"
-        with open(self.file_path, 'r') as f:
-            lines = f.readlines()
+        with open(self.file_path, 'r') as f_r:
+            lines = f_r.readlines()
             filename = os.path.join(os.path.dirname(__file__), "..", "deleted", filename)
-            with Path(filename).open('w') as f:
-                f.writelines(lines)
+            with Path(filename).open('w') as f_w:
+                f_w.writelines(lines)
 
         # delete the prompt file
-        with open(self.file_path, 'w') as f:
-            f.write('')
+        with open(self.file_path, 'w') as f_w:
+            f_w.write('')
 
         print("\n#   Context has been cleared, temporarily saved to {}".format(filename))
         self.set_config(config)
@@ -160,13 +161,13 @@ class PromptFile:
         """
         Clear the last interaction from the prompt file
         """
-        with open(self.file_path, 'r') as f:
-            lines = f.readlines()
+        with open(self.file_path, 'r') as f_r:
+            lines = f_r.readlines()
             if len(lines) > 1:
                 lines.pop()
                 lines.pop()
-                with open(self.file_path, 'w') as f:
-                    f.writelines(lines)
+                with open(self.file_path, 'w') as f_w:
+                    f_w.writelines(lines)
             print("\n#   Unlearned interaction")
 
     def save_to(self, save_name):
@@ -178,17 +179,17 @@ class PromptFile:
         save_path = os.path.join(os.path.dirname(__file__), "..", "contexts", save_name)
 
         # first write the config
-        with open(self.config_path, 'r') as f:
-            lines = f.readlines()
+        with open(self.config_path, 'r') as f_r:
+            lines = f_r.readlines()
             lines = ['## ' + line for line in lines]
-            with Path(save_path).open('w') as f:
-                f.writelines(lines)
+            with Path(save_path).open('w') as f_w:
+                f_w.writelines(lines)
 
         # then write the prompt file
-        with open(self.file_path, 'r') as f:
-            lines = f.readlines()
-            with Path(save_path).open('a') as f:
-                f.writelines(lines)
+        with open(self.file_path, 'r') as f_r:
+            lines = f_r.readlines()
+            with Path(save_path).open('a') as f_w:
+                f_w.writelines(lines)
 
         print('\n#   Context saved to {}'.format(save_name))
 
@@ -230,10 +231,10 @@ class PromptFile:
             # read in the model name from openaiapirc
             config = configparser.ConfigParser()
             config.read(API_KEYS_LOCATION)
-            MODEL = config['openai']['model'].strip('"').strip("'")
+            model = config['openai']['model'].strip('"').strip("'")
 
             config = {
-                'model': MODEL,
+                'model': model,
                 'temperature': float(lines[1].split(':')[1].strip()),
                 'max_tokens': int(lines[2].split(':')[1].strip()),
                 'shell': lines[3].split(':')[1].strip(),
