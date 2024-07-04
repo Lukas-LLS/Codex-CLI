@@ -58,17 +58,17 @@ def initialize():
 
     # Check if the file at API_KEYS_LOCATION exists
     create_template_ini_file()
-    config = configparser.ConfigParser()
-    config.read(API_KEYS_LOCATION)
+    config_parser = configparser.ConfigParser()
+    config_parser.read(API_KEYS_LOCATION)
 
-    api_key = config['openai']['secret_key'].strip('"').strip("'")
-    organization = config['openai']['organization_id'].strip('"').strip("'")
+    api_key = config_parser['openai']['secret_key'].strip('"').strip("'")
+    organization = config_parser['openai']['organization_id'].strip('"').strip("'")
 
     CLIENT_DATA = {
         'api_key': api_key,
         'organization': organization
     }
-    MODEL = config['openai']['model'].strip('"').strip("'")
+    MODEL = config_parser['openai']['model'].strip('"').strip("'")
 
     prompt_config = {
         'model': MODEL,
@@ -82,7 +82,7 @@ def initialize():
     return PromptFile(PROMPT_CONTEXT.name, prompt_config)
 
 
-def get_query(prompt_file):
+def get_query(prompt_file_config):
     """
     Uses the stdin to get user input
     the input is either treated as a command or as a Codex query
@@ -96,11 +96,11 @@ def get_query(prompt_file):
     else:
         entry = sys.stdin.read()
     # first, we check if the input is a command
-    command_result, prompt_file = get_command_result(entry, prompt_file)
+    command_result, prompt_file_config = get_command_result(entry, prompt_file_config)
 
     # if input is not a command, then query Codex; otherwise exit command has been run successfully
     if command_result == "":
-        return entry, prompt_file
+        return entry, prompt_file_config
     else:
         sys.exit(0)
 
@@ -110,11 +110,11 @@ def detect_shell():
     global PROMPT_CONTEXT
 
     parent_process_name = psutil.Process(os.getppid()).name()
-    POWERSHELL_MODE = bool(re.fullmatch('pwsh|pwsh.exe|powershell.exe', parent_process_name))
-    BASH_MODE = bool(re.fullmatch('bash|bash.exe', parent_process_name))
-    ZSH_MODE = bool(re.fullmatch('zsh|zsh.exe', parent_process_name))
+    powershell_mode = bool(re.fullmatch('pwsh|pwsh.exe|powershell.exe', parent_process_name))
+    bash_mode = bool(re.fullmatch('bash|bash.exe', parent_process_name))
+    zsh_mode = bool(re.fullmatch('zsh|zsh.exe', parent_process_name))
 
-    SHELL = "powershell" if POWERSHELL_MODE else "bash" if BASH_MODE else "zsh" if ZSH_MODE else "unknown"
+    SHELL = "powershell" if powershell_mode else "bash" if bash_mode else "zsh" if zsh_mode else "unknown"
 
     shell_prompt_file = Path(os.path.join(os.path.dirname(__file__), "..", "contexts", "{}-context.txt".format(SHELL)))
 
