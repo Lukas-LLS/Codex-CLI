@@ -45,13 +45,13 @@ askSettings()
 {
     echo "*** Starting Codex CLI bash setup ***"
     if [ -z "$ORG_ID" ]; then
-        echo -n 'OpenAI Organization Id: '; read ORG_ID
+        echo -n 'OpenAI Organization Id: '; read -r ORG_ID
     fi
     if [ -z "$SECRET_KEY" ]; then
-        echo -n 'OpenAI API key: '; read -s SECRET_KEY; echo
+        echo -n 'OpenAI API key: '; read -r -s SECRET_KEY; echo
     fi
     if [ -z "$MODEL_ID" ]; then
-        echo -n 'OpenAI Model Id: '; read MODEL_ID
+        echo -n 'OpenAI Model Id: '; read -r MODEL_ID
     fi
 }
 
