@@ -146,22 +146,15 @@ if __name__ == '__main__':
 
         # get the response from openAI
 
+        system_message_content = (
+                ('You are a shell code assistant, complete the textual query of the user with a valid shell command. '
+                 'The specific shell type is ') + config['shell'] +
+                '. If the user wants a textual reply, your reply should be prefixed with a comment symbol based on the '
+                'shell type. You must not use code blocks to respond to the user, write commands directly.')
+
         response = client.chat.completions.create(model=config['model'],
                                                   messages=[
-                                                      {'role': 'system', 'content': 'You are a shell code assistant, '
-                                                                                    'complete the textual query of the '
-                                                                                    'user with a valid shell command. '
-                                                                                    'The specific shell type is ' +
-                                                                                    config['shell'] + '. If the user '
-                                                                                                      'wants a textual '
-                                                                                                      'reply, your '
-                                                                                                      'reply'
-                                                                                                      'should be '
-                                                                                                      'prefixed with a '
-                                                                                                      'comment'
-                                                                                                      'symbol based on '
-                                                                                                      'the shell '
-                                                                                                      'type.'},
+                                                      {'role': 'system', 'content': system_message_content},
                                                       {'role': 'user', 'content': codex_query}],
                                                   temperature=config['temperature'], max_tokens=config['max_tokens'],
                                                   stop="#")
