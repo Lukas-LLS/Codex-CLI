@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 ################################################
 ## *** Codex CLI plugin function for Bash *** ##
 ##         loaded by $HOME/.codexclirc        ##
