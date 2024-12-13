@@ -44,7 +44,11 @@ validateSettings()
 configureZsh()
 {
     # Remove previous settings
-    sed -i '' '/### Codex CLI setup - start/,/### Codex CLI setup - end/d' $zshrcPath
+    if [ "$(uname)" = "Linux" ]; then
+        sed -i '/### Codex CLI setup - start/,/### Codex CLI setup - end/d' $zshrcPath
+    else
+        sed -i '' '/### Codex CLI setup - start/,/### Codex CLI setup - end/d' $zshrcPath
+    fi
     echo "Removed previous settings in $zshrcPath if present"
 
     # Update the latest settings
