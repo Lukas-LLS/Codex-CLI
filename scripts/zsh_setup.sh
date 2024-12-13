@@ -13,11 +13,10 @@
 set -e
 
 # Call OpenAI API with the given settings to verify everything is in order
-# API call to https://api.openai.com/v1/engines is a potential risk in the future because the route is deprecated
 validateSettings()
 {
     echo -n "*** Testing Open AI access... "
-    local TEST=$(curl -s 'https://api.openai.com/v1/engines' -H "Authorization: Bearer $secret" -H "OpenAI-Organization: $orgId" -w '%{http_code}')
+    local TEST=$(curl -s 'https://api.openai.com/v1/models' -H "Authorization: Bearer $secret" -H "OpenAI-Organization: $orgId" -w '%{http_code}')
     local STATUS_CODE=$(echo "$TEST"|tail -n 1)
     if [ $STATUS_CODE -ne 200 ]; then
         echo "ERROR [$STATUS_CODE]"

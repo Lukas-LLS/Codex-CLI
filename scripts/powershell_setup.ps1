@@ -43,9 +43,8 @@ if ($PSMajorVersion -lt 7) {
 }
 
 # Check the access with OpenAI API
-# API call to https://api.openai.com/v1/engines is a potential risk in the future because the route is deprecated
 Write-Host "Checking OpenAI access..."
-$testApiUri = "https://api.openai.com/v1/engines"
+$testApiUri = "https://api.openai.com/v1/models"
 $response = $null
 try {
     if ($PSMajorVersion -lt 7) {
