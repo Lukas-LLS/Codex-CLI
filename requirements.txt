@@ -1,2 +1,2 @@
-openai>=1.58.1
+openai>=1.59.2
 psutil>=6.1.1
