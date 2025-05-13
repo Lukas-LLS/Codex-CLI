@@ -257,6 +257,9 @@ class PromptFile:
 
                 if not initialize:
                     print('\n#   Context loaded from {}'.format(filename))
+                    return None
+                return None
+            return None
         else:
             print("\n#   File not found")
             return False

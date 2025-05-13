@@ -102,7 +102,7 @@ def get_query(prompt_file_config):
     if command_result == "":
         return entry, prompt_file_config
     else:
-        sys.exit(0)
+        return sys.exit(0)
 
 
 def detect_shell():
