@@ -101,14 +101,14 @@ class PromptFile:
         need_to_refresh = (self.config['token_count'] + input_tokens_count > 2048)
 
         if need_to_refresh:
-            # delete first 2 lines of prompt context file
+            # delete the first 2 lines of the prompt context file
             with open(self.file_path, 'r') as f:
                 lines = f.readlines()
                 prompt = lines[2:]  # drop first 2 lines of prompt
             with open(self.file_path, 'w') as f:
                 f.writelines(prompt)
 
-        # get input from prompt file
+        # get input from the prompt file
         with open(self.file_path, 'r') as f:
             lines = f.readlines()
 

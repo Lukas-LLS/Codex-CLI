@@ -9,6 +9,7 @@ from pathlib import Path
 import openai
 import psutil
 from openai import OpenAI
+from openai.types.chat import ChatCompletionSystemMessageParam, ChatCompletionUserMessageParam
 
 from commands import get_command_result
 from prompt_file import PromptFile
@@ -152,12 +153,18 @@ if __name__ == '__main__':
                 '. If the user wants a textual reply, your reply should be prefixed with a comment symbol based on the '
                 'shell type. You must not use code blocks to respond to the user, write commands directly.')
 
-        response = client.chat.completions.create(model=config['model'],
-                                                  messages=[
-                                                      {'role': 'system', 'content': system_message_content},
-                                                      {'role': 'user', 'content': codex_query}],
-                                                  temperature=config['temperature'], max_tokens=config['max_tokens'],
-                                                  stop="#")
+        response = client.chat.completions.create(
+            model=config['model'],
+            user="codex-cli",
+            messages=[
+                ChatCompletionSystemMessageParam(role='system', content=system_message_content),
+                ChatCompletionUserMessageParam(role='user', content=codex_query),
+            ],
+            temperature=config['temperature'],
+            max_tokens=config['max_tokens'],
+            stop="#",
+            n=1,
+        )
 
         completion_all = response.choices[0].message.content
 
