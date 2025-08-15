@@ -21,7 +21,6 @@ jobs:
       - name: Run Qodana
         uses: JetBrains/qodana-action@latest
         timeout-minutes: 20
-        timeout-minutes: 20
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
         with:
