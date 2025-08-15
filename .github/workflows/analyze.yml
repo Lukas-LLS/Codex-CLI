@@ -20,5 +20,8 @@ jobs:
           python-version: '3.12'
       - name: Run Qodana
         uses: JetBrains/qodana-action@latest
+        uses: JetBrains/qodana-action@latest         timeout-minutes: 20
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
+        with:
+          args: --clear-cache
