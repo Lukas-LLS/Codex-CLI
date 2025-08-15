@@ -19,7 +19,8 @@ jobs:
           auto-update-conda: true
           python-version: '3.12'
       - name: Run Qodana
-        uses: JetBrains/qodana-action@latest`r`n        timeout-minutes: 20
+        uses: JetBrains/qodana-action@latestuses: JetBrains/qodana-action@latest
+        timeout-minutes: 20
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
         with:
