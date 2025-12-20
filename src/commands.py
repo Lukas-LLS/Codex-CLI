@@ -1,4 +1,5 @@
-from prompt_file import *
+import os
+import time
 
 
 def get_command_result(command_input, prompt_file):
