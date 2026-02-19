@@ -162,7 +162,6 @@ if __name__ == '__main__':
             ],
             temperature=config['temperature'],
             max_completion_tokens=config['max_tokens'],
-            stop="#",
             n=1,
         )
 
