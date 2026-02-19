@@ -160,7 +160,6 @@ if __name__ == '__main__':
                 ChatCompletionSystemMessageParam(role='system', content=system_message_content),
                 ChatCompletionUserMessageParam(role='user', content=codex_query),
             ],
-            temperature=config['temperature'],
             max_completion_tokens=config['max_tokens'],
             n=1,
         )
